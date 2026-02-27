@@ -1,64 +1,81 @@
-"SECURE BACKEND PROJECT" 
+PROJECT TITLE:
 
-OVERVIEW:
+# "SECURE BACKEND AUTHENTICATION SYSTEM": 
 
-This project implements a secure backend using Node.js and Express.
-It demonstrates:
+DESCRIPTION:
 
-1- Input validation
-2- Password hashing
-3- JWT authentication
-4- Protected routes
-5- Secure HTTP headers using Helmet
+A secure Node.js backend application implementing authentication, JWT authorization, password hashing, security headers, logging, and basic penetration testing simulation.
 
-TECHNOLOGIES USED:
+FEATURES:
 
-1- Node.js
-2- Express.js
-3- bcrypt
-4- jsonwebtoken (JWT)
-5- Helmet.js
-6- Validator.js
+User Registration with validation
 
-SECURITY FEATURES IMPLEMENTED:
+Secure Password Hashing using bcrypt
 
-1️⃣ Input Validation
-Email format validation
-Strong password enforcement
+JWT-based Authentication
 
-2️⃣ Password Hashing
-bcrypt hashing with salt rounds
+Protected Routes
 
-3️⃣ JWT Authentication
-Token generation on login
-Token verification for protected routes
-Token expiration (1 hour)
+Security Headers using Helmet
 
-4️⃣ Secure HTTP Headers
-Implemented using Helmet.js to protect against:
-XSS
-Clickjacking
-MIME sniffing
-Cross-origin attacks
+Logging using Winston
 
+Basic Penetration Testing Simulation (Nmap)
 
+Technologies Used
 
-HOW TO RUN:
+Node.js
 
-1. Install dependencies
+Express.js
+
+bcrypt
+
+jsonwebtoken
+
+helmet
+
+winston
+
+validator
+
+Security Features 
+
+Input validation
+
+Password hashing & salting
+
+JWT token verification
+
+Security logging
+
+Basic port scanning using Nmap
+
+HOW TO RUN THE PROJECT:
+
 npm install
-
-2. Start server 
 node server.js
+
 Server runs on:
+
 http://localhost:3000
 
+PENETRATION TETSING:
 
-API ENDPOINTS:
+Used Nmap to scan open ports
 
-1- POST /register:
-    Register user with email & strong password.
-2- POST /login:
-    Returns JWT token on valid credentials.
-3- GET /dashboard:
-    Protected route requiring JWT token.
+Verified server is running on port 3000
+
+Confirmed no unnecessary ports exposed
+
+LOGGING:
+
+Winston configured
+
+Logs saved in security.log
+
+Logs application start & security events
+
+AUTHOR:
+
+Nameerah Noor
+Internship Project
