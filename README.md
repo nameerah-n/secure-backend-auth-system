@@ -1,12 +1,12 @@
-PROJECT TITLE:
+### PROJECT TITLE:
 
 # "SECURE BACKEND AUTHENTICATION SYSTEM": 
 
-DESCRIPTION:
+### DESCRIPTION:
 
 A secure Node.js backend application implementing authentication, JWT authorization, password hashing, security headers, logging, and basic penetration testing simulation.
 
-FEATURES:
+### FEATURES:
 
 1- User Registration with validation
 
@@ -22,7 +22,7 @@ FEATURES:
 
 7- Basic Penetration Testing Simulation (Nmap)
 
-TECHNOLOGIES USED:
+### TECHNOLOGIES USED:
 
 1- Node.js
 
@@ -50,7 +50,7 @@ TECHNOLOGIES USED:
 
 13- Basic port scanning using Nmap
 
-HOW TO RUN THE PROJECT:
+### HOW TO RUN THE PROJECT:
 
 => npm install
 => node server.js
@@ -58,7 +58,7 @@ HOW TO RUN THE PROJECT:
 Server runs on:
 http://localhost:3000
 
-PENETRATION TETSING:
+### PENETRATION TETSING:
 
 1- Used Nmap to scan open ports
 
@@ -66,7 +66,7 @@ PENETRATION TETSING:
 
 3- Confirmed no unnecessary ports exposed
 
-LOGGING:
+### LOGGING:
 
 => Winston configured
 
@@ -74,7 +74,7 @@ LOGGING:
 
 => Logs application start & security events
 
-AUTHOR:
+### AUTHOR:
 
 # Nameerah Noor
 
