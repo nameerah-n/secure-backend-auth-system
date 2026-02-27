@@ -8,74 +8,74 @@ A secure Node.js backend application implementing authentication, JWT authorizat
 
 FEATURES:
 
-User Registration with validation
+1- User Registration with validation
 
-Secure Password Hashing using bcrypt
+2- Secure Password Hashing using bcrypt
 
-JWT-based Authentication
+3- JWT-based Authentication
 
-Protected Routes
+4- Protected Routes
 
-Security Headers using Helmet
+5- Security Headers using Helmet
 
-Logging using Winston
+6- Logging using Winston
 
-Basic Penetration Testing Simulation (Nmap)
+7- Basic Penetration Testing Simulation (Nmap)
 
-Technologies Used
+TECHNOLOGIES USED:
 
-Node.js
+1- Node.js
 
-Express.js
+2- Express.js
 
-bcrypt
+3- bcrypt
 
-jsonwebtoken
+4- jsonwebtoken
 
-helmet
+5- helmet
 
-winston
+6- winston
 
-validator
+7- validator
 
-Security Features 
+8- Security Features 
 
-Input validation
+9- Input validation
 
-Password hashing & salting
+10- Password hashing & salting
 
-JWT token verification
+11- JWT token verification
 
-Security logging
+12- Security logging
 
-Basic port scanning using Nmap
+13- Basic port scanning using Nmap
 
 HOW TO RUN THE PROJECT:
 
-npm install
-node server.js
+=> npm install
+=> node server.js
 
 Server runs on:
-
 http://localhost:3000
 
 PENETRATION TETSING:
 
-Used Nmap to scan open ports
+1- Used Nmap to scan open ports
 
-Verified server is running on port 3000
+2- Verified server is running on port 3000
 
-Confirmed no unnecessary ports exposed
+3- Confirmed no unnecessary ports exposed
 
 LOGGING:
 
-Winston configured
+=> Winston configured
 
-Logs saved in security.log
+=> Logs saved in security.log
 
-Logs application start & security events
+=> Logs application start & security events
 
 AUTHOR:
 
-Nameerah Noor
-Internship Project
+# Nameerah Noor
+
+INTERNSHIP PROJECT
