@@ -8,6 +8,7 @@ const winston = require('winston');
 const fs = require('fs');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const bodyParser = require('body-parser');
 
 // -------------------- INITIALIZE --------------------
 const app = express();
@@ -31,11 +32,11 @@ const logger = winston.createLogger({
 logger.info("Application started");
 
 // -------------------- MIDDLEWARE --------------------
-app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(helmet());
 
-// -------------------- HELMET FOR SECURITY HEADERS --------------------
-app.use(helmet()); // sets default headers
-// CSP
+// -------------------- HELMET CONFIG --------------------
 app.use(
     helmet.contentSecurityPolicy({
         directives: {
@@ -48,7 +49,7 @@ app.use(
         },
     })
 );
-// HSTS
+
 app.use(
     helmet.hsts({
         maxAge: 31536000,
@@ -97,7 +98,29 @@ app.use((req, res, next) => {
 // -------------------- ROOT ROUTE --------------------
 app.get('/', (req, res) => {
     logger.info("Root endpoint accessed");
-    res.send("Secure Backend is Running 🚀");
+    res.send(`
+        <h1>Secure Backend System</h1>
+
+        <h2>Login</h2>
+        <form action="/login" method="POST">
+            <input name="email" placeholder="Email" required /><br>
+            <input name="password" type="password" placeholder="Password" required /><br>
+            <button type="submit">Login</button>
+        </form>
+
+        <h2>Register</h2>
+        <form action="/register" method="POST">
+            <input name="email" placeholder="Email" required /><br>
+            <input name="password" type="password" placeholder="Password" required /><br>
+            <button type="submit">Register</button>
+        </form>
+
+        <h2>Search User</h2>
+        <form action="/user" method="GET">
+            <input name="username" placeholder="Search username" />
+            <button type="submit">Search</button>
+        </form>
+    `);
 });
 
 // -------------------- REGISTER ROUTE --------------------
@@ -187,6 +210,28 @@ app.get('/dashboard', apiKeyMiddleware, (req, res) => {
         logger.warn("Dashboard access failed: Invalid or expired token");
         res.status(401).json({ message: "Invalid or expired token" });
     }
+});
+
+// -------------------- USER SEARCH ROUTE (for recon + later testing) --------------------
+let users = [
+    { username: "admin", email: "admin@example.com" },
+    { username: "user", email: "user@example.com" }
+];
+
+app.get('/user', (req, res) => {
+    const username = req.query.username || "";
+    const result = users.filter(u => u.username.includes(username));
+    logger.info(`User search: ${username}`);
+    res.json(result);
+});
+
+// -------------------- SAMPLE API ROUTE --------------------
+app.get('/api/data', (req, res) => {
+    logger.info("API /api/data accessed");
+    res.json({
+        message: "This is a sample API endpoint",
+        status: "OK"
+    });
 });
 
 // -------------------- START SERVER --------------------
