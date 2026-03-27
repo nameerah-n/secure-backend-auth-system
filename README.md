@@ -1,81 +1,95 @@
-### PROJECT TITLE:
+# "SECURE BACKEND AUTHENTICATION SYSTEM" 
 
-# "SECURE BACKEND AUTHENTICATION SYSTEM": 
+## Project Overview
 
-### DESCRIPTION:
+A secure Node.js backend application demonstrating robust authentication, security hardening, penetration testing, and compliance with best practices.  
+The system integrates Zero Trust principles, Web Application Firewall (WAF), and phishing simulation for user awareness.
 
-A secure Node.js backend application implementing authentication, JWT authorization, password hashing, security headers, logging, and basic penetration testing simulation.
 
-### FEATURES:
+## Features
 
-1- User Registration with validation
+1. **User Registration & Login with Validation**  
 
-2- Secure Password Hashing using bcrypt
+   - Email and password validated and sanitized to prevent malicious input.
 
-3- JWT-based Authentication
+2. **Secure Password Hashing**  
 
-4- Protected Routes
+   - Passwords hashed and salted with bcrypt for safe storage.
 
-5- Security Headers using Helmet
+3. **JWT-Based Authentication**  
 
-6- Logging using Winston
+   - Role-based access (User/Admin) with protected routes.
 
-7- Basic Penetration Testing Simulation (Nmap)
+4. **Protected Routes & Zero Trust Security**  
 
-### TECHNOLOGIES USED:
+   - Enforced least-privilege access.  
 
-1- Node.js
+   - Re-authentication required for sensitive endpoints.
 
-2- Express.js
+5. **Security Headers with Helmet**  
 
-3- bcrypt
+   - CSP, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options, and others applied.
 
-4- jsonwebtoken
+6. **Logging using Winston**  
 
-5- helmet
+   - Application events and security events logged in `security.log`.
 
-6- winston
+7. **Rate Limiting**  
 
-7- validator
+   - Protects against brute-force login attempts.
 
-8- Security Features 
+8. **Web Application Firewall (WAF)**  
 
-9- Input validation
+   - Extra layer of protection against web attacks.
 
-10- Password hashing & salting
+9. **Input Validation & Sanitization**  
 
-11- JWT token verification
+   - Prevents SQL Injection (SQLi) and Cross-Site Scripting (XSS).
 
-12- Security logging
+10. **CSRF Protection**  
 
-13- Basic port scanning using Nmap
+    - CSRF tokens enforced on register/login forms.
 
-### HOW TO RUN THE PROJECT:
+11. **Phishing Simulation**  
 
-=> npm install
-=> node server.js
+    - Social engineering attack simulated for awareness.
 
-Server runs on:
-http://localhost:3000
 
-### PENETRATION TETSING:
+## Technologies Used
 
-1- Used Nmap to scan open ports
+- Node.js & Express.js  
 
-2- Verified server is running on port 3000
+- bcrypt  
 
-3- Confirmed no unnecessary ports exposed
+- jsonwebtoken  
 
-### LOGGING:
+- helmet  
 
-=> Winston configured
+- winston  
 
-=> Logs saved in security.log
+- validator  
 
-=> Logs application start & security events
+- csurf  
 
-### AUTHOR:
+- xss-clean  
 
-# Nameerah Noor
+- express-rate-limit  
 
-INTERNSHIP PROJECT
+- Docker  
+
+- HTML (phishing simulation)  
+
+## Install dependencies:
+
+npm install
+
+Start the server:
+
+node server.js
+
+
+## Access the application:
+
+Server: http://localhost:3000
+
+Phishing simulation: phishing.html
