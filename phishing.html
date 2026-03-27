@@ -1,0 +1,31 @@
+!DOCTYPE html>
+<html>
+<head>
+  <title>Secure Login</title>
+</head>
+<body>
+
+  <h2>Account Verification</h2>
+  <p>Your account requires verification. Please login below.</p>
+
+  <form onsubmit="captureData(event)">
+    Email: <input type="text" id="email"><br><br>
+    Password: <input type="password" id="password"><br><br>
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    function captureData(e) {
+      e.preventDefault();
+
+      let email = document.getElementById("email").value;
+      let password = document.getElementById("password").value;
+
+      console.log("Captured:", email, password);
+
+      alert("Login failed. Please try again.");
+    }
+  </script>
+
+</body>
+</html>

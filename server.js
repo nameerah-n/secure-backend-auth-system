@@ -1,157 +1,147 @@
-// -------------------- IMPORTS --------------------
-const express = require('express');
-const validator = require('validator');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const helmet = require('helmet');
-const winston = require('winston');
-const fs = require('fs');
-const cors = require('cors');
-const rateLimit = require('express-rate-limit');
-const mysql = require('mysql');
+require("dotenv").config();
 
-const csrf = require('csurf');
-const cookieParser = require('cookie-parser');
+const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const morgan = require("morgan");
 
-// -------------------- INIT --------------------
+// 🛡 WAF Imports
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+
 const app = express();
-const PORT = 3000;
 
-// -------------------- DB --------------------
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "testdb"
-});
-
-db.connect(err => {
-    if (err) console.log("❌ DB error");
-    else console.log("✅ DB Connected");
-});
-
-// -------------------- LOGGER --------------------
-const logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.simple(),
-    transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({ filename: 'security.log' })
-    ]
-});
-
-// -------------------- MIDDLEWARE --------------------
+// ===============================
+// 🔐 BASIC MIDDLEWARE
+// ===============================
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // ✅ IMPORTANT
-app.use(cookieParser());
+app.use(morgan("combined"));
+
+// ===============================
+// 🛡 WAF SECURITY LAYER
+// ===============================
+
+// Secure HTTP headers
 app.use(helmet());
 
-app.use(cors({
-    origin: ['http://localhost:5500'],
-    methods: ['GET','POST']
-}));
 
-// -------------------- RATE LIMIT --------------------
+// Rate limiting (anti brute-force)
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 10
-});
-app.use('/login', limiter);
-
-// -------------------- CSRF --------------------
-const csrfProtection = csrf({ cookie: true });
-
-// -------------------- FRONTEND PAGE --------------------
-app.get('/', (req, res) => {
-    res.send(`
-    <html>
-    <body style="font-family: Arial; padding: 40px;">
-        <h2>🔐 Secure App</h2>
-
-        <h3>Register</h3>
-        <form action="/register" method="POST">
-            <input name="email" placeholder="Email" required/><br><br>
-            <input name="password" type="password" placeholder="Password" required/><br><br>
-            <input type="hidden" name="_csrf" id="csrf1"/>
-            <button type="submit">Register</button>
-        </form>
-
-        <h3>Login</h3>
-        <form action="/login" method="POST">
-            <input name="email" placeholder="Email" required/><br><br>
-            <input name="password" type="password" placeholder="Password" required/><br><br>
-            <input type="hidden" name="_csrf" id="csrf2"/>
-            <button type="submit">Login</button>
-        </form>
-
-        <script>
-            fetch('/csrf-token')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('csrf1').value = data.csrfToken;
-                document.getElementById('csrf2').value = data.csrfToken;
-            });
-        </script>
-    </body>
-    </html>
-    `);
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // limit each IP
+  message: "Too many requests, try again later"
 });
 
-// -------------------- CSRF TOKEN --------------------
-app.get('/csrf-token', csrfProtection, (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });
+app.use(limiter);
+
+// ===============================
+// 🗄 TEMP DATABASE
+// ===============================
+let users = [];
+
+const SECRET_KEY = "supersecretkey";
+
+// ===============================
+// 🔐 REGISTER
+// ===============================
+app.post("/register", async (req, res) => {
+  try {
+    const { email, password, role } = req.body;
+
+    if (!email || !password || password.length < 6) {
+      return res.status(400).send("Invalid input");
+    }
+
+    const existingUser = users.find(u => u.email === email);
+    if (existingUser) {
+      return res.status(400).send("User already exists");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    users.push({
+      email,
+      password: hashedPassword,
+      role: role || "user"
+    });
+
+    res.send("User registered securely");
+  } catch (err) {
+    res.status(500).send("Server error");
+  }
 });
 
-// -------------------- REGISTER --------------------
-app.post('/register', csrfProtection, async (req, res) => {
+// ===============================
+// 🔑 LOGIN
+// ===============================
+app.post("/login", async (req, res) => {
+  try {
     const { email, password } = req.body;
 
-    if (!validator.isEmail(email))
-        return res.send("Invalid email");
+    const user = users.find(u => u.email === email);
+    if (!user) return res.status(400).send("User not found");
 
-    const hash = await bcrypt.hash(password, 10);
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return res.status(403).send("Invalid password");
 
-    res.send("Registered ✅");
+    const token = jwt.sign(
+      { email: user.email, role: user.role },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ token });
+  } catch (err) {
+    res.status(500).send("Server error");
+  }
 });
 
-// -------------------- LOGIN --------------------
-app.post('/login', csrfProtection, async (req, res) => {
-    const { email, password } = req.body;
+// ===============================
+// 🛡 AUTH MIDDLEWARE
+// ===============================
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
 
-    const stored = await bcrypt.hash("Tooba@123", 10);
-    const match = await bcrypt.compare(password, stored);
+  if (!authHeader) return res.sendStatus(401);
 
-    if (!match)
-        return res.send("Login Failed ❌");
+  const token = authHeader.split(" ")[1];
 
-    res.send("Login Success ✅");
+  if (!token) return res.sendStatus(401);
+
+  jwt.verify(token, SECRET_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+
+    req.user = user;
+    next();
+  });
+}
+
+// ===============================
+// 👑 ROLE-BASED ACCESS
+// ===============================
+function authorize(role) {
+  return (req, res, next) => {
+    if (req.user.role !== role) {
+      return res.status(403).send("Access Denied");
+    }
+    next();
+  };
+}
+
+// ===============================
+// 🔒 PROTECTED ROUTES
+// ===============================
+app.get("/dashboard", authenticateToken, (req, res) => {
+  res.send(Welcome ${req.user.email});
 });
 
-// -------------------- SQLi VULNERABLE --------------------
-app.get('/user', (req, res) => {
-    const username = req.query.username;
-
-    const query = `SELECT * FROM users WHERE username = '${username}'`;
-
-    db.query(query, (err, result) => {
-        if (err) return res.send("Error");
-        res.json(result);
-    });
+app.get("/admin", authenticateToken, authorize("admin"), (req, res) => {
+  res.send("Admin Panel Access Granted");
 });
 
-// -------------------- SQLi FIXED --------------------
-app.get('/secure-user', (req, res) => {
-    const username = req.query.username;
-
-    const query = "SELECT * FROM users WHERE username = ?";
-
-    db.query(query, [username], (err, result) => {
-        if (err) return res.send("Error");
-        res.json(result);
-    });
-});
-
-// -------------------- START --------------------
-app.listen(PORT, () => {
-    console.log("🚀 http://localhost:3000");
+// ===============================
+// 🚀 START SERVER
+// ===============================
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
