@@ -4,6 +4,8 @@
 
 A secure Node.js backend application demonstrating robust authentication, security hardening, penetration testing, and compliance with best practices.  
 The system integrates Zero Trust principles, Web Application Firewall (WAF), and phishing simulation for user awareness.
+⚠️ Ethical Note:
+Phishing simulation was conducted in a controlled environment for educational purposes only. No real user data was collected or misused.
 
 
 ## Features
